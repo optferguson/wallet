@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SBAFG is the most trusted place to buy, sell, and use cryptocurrency. Track live prices and jump start your portfolio today.">
+    <meta name="keywords" content="crypto, cryptocurrency, bitcoin, ethereum, real-time price, portfolio, buy crypto, sell crypto, SBAFG">
+    <meta name="author" content="SBAFG">
+    <title>SBAFG - Live Crypto Prices</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        /* --- General Body and Font Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+            color: #121212;
+            background-color: #f7f9fc;
+        }
+
+        /* --- Header Styles --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between logo shape and text */
+        }
+        
+        .logo-design {
+            width: 28px;
+            height: 28px;
+            background-color: #0052FF;
+            border-radius: 6px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0052FF;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 16px; /* Space between buttons */
+        }
+
+        .log-in-btn-header {
+            background: transparent;
+            border: none;
+            color: #0052FF;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .sign-up-btn-header {
+            background-color: #0052FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* --- Main Content (Sign-up form) Styles --- */
+        .main-content {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .main-content a {
+            text-decoration: none;
+            color: #121212;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .main-content h1 {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+
+        .main-content p {
+            font-size: 20px;
+            color: #5d6a7e;
+            line-height: 1.5;
+            margin-bottom: 32px;
+        }
+
+        .email-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .sign-up-btn-main {
+            background-color: #0052FF;
+            color: white;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* --- Crypto Price Grid Styles --- */
+        .crypto-section {
+            max-width: 540px;
+            margin: 60px auto 0;
+        }
+
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .crypto-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .crypto-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .crypto-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .crypto-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+        }
+
+        .crypto-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .crypto-price {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .crypto-change {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .positive { color: #059669; }
+        .negative { color: #DC2626; }
+        
+        /* --- Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .modal-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .modal-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            border: 1px solid #dcdcdc;
+            box-sizing: border-box;
+        }
+        .success-prompt {
+            display: none;
+            padding: 12px 15px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-design"></div>
+            <div class="logo-text">SBAFG</div>
+        </div>
+        <div class="header-buttons">
+            <button class="log-in-btn-header" id="header-login-btn">Log in</button>
+            <button class="sign-up-btn-header" id="header-signup-btn">Sign up</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <p>
+            <a id="jump-start-link"><strong>₿ Jump start your portfolio &rarr;</strong></a>
+        </p>
+        <h1>The future of money is here</h1>
+        <p>We're the most trusted place for people and businesses to buy, sell, and use crypto.</p>
+        <form>
+            <label for="email" class="email-label">Email address</label>
+            <input type="email" id="email" class="email-input" placeholder="satoshi@nakamoto.com">
+            <button type="submit" class="sign-up-btn-main" id="main-signup-btn">Get started</button>
+        </form>
+    </main>
+
+    <section class="crypto-section" id="crypto-prices">
+        <div class="crypto-grid">
+            </div>
+    </section>
+
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span id="signup-close-btn" class="modal-close-btn">&times;</span>
+            <h2>Create your account</h2>
+            <form id="signup-form" class="modal-form">
+                <label for="modal-username">Username</label>
+                <input type="text" id="modal-username" required>
+                <label for="modal-email">Email</label>
+                <input type="email" id="modal-email" required>
+                <label for="modal-password">Password</label>
+                <input type="password" id="modal-password" required>
+                <button type="submit" class="sign-up-btn-main">Create Account</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div id="login-success-prompt" class="success-prompt">Account created! Please check your email to confirm.</div>
+            <span id="login-close-btn" class="modal-close-btn">&times;</span>
+            <h2>Welcome Back!</h2>
+            <form id="login-form" class="modal-form">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" required>
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+                <button type="submit" class="sign-up-btn-main">Log in</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>

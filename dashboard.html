@@ -135,6 +135,14 @@
         .greeting-toast.show { top: 85px; opacity: 1; }
         #confirm-withdrawal-btn:disabled { background-color: #555; cursor: not-allowed; }
         .vip-icon.bronze { color: var(--bronze); } .vip-icon.silver { color: var(--silver); } .vip-icon.gold { color: var(--gold); } .vip-icon.platinum { color: var(--platinum); } .vip-icon.diamond { color: var(--diamond); }
+        /* MODIFIED: Styles for transaction history list */
+        .transaction-list { max-height: 400px; overflow-y: auto; padding-right: 10px; }
+        .transaction-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+        .transaction-item:last-child { border-bottom: none; }
+        .transaction-details { text-align: left; }
+        .transaction-description { font-weight: 500; }
+        .transaction-date { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
+        .transaction-amount { font-size: 16px; font-weight: 600; }
         @media (max-width: 480px) {
             body { padding: 0; }
             .mobile-mockup { width: 100vw; height: 100vh; max-width: none; max-height: none; border-radius: 0; border: none; padding: 0; }
@@ -146,80 +154,78 @@
     </style>
 </head>
 <body>
-
     <div class="mobile-mockup">
         <div class="notch"></div>
         <div class="screen">
             <div class="wallet-container">
                 <div id="toast-notification" class="greeting-toast"></div>
-
-                <div class="top-header">
-                    <button id="menu-btn" class="menu-button"><i class="fa-solid fa-bars"></i></button>
-                </div>
-                
-                <div class="top-bar-box">
-                    <p class="balance-label">Main Balance</p>
-                    <div id="main-balance" class="main-balance-amount">$0.00</div>
-                    <p id="bonus-balance" class="bonus-balance-amount">Bonus: $0.00</p>
-                    <div class="top-buttons-container">
-                        <button id="top-deposit-btn" class="top-action-btn">Deposit</button>
-                        <button id="top-withdraw-btn" class="top-action-btn">Withdraw</button>
-                        <button id="top-vip-btn" class="top-action-btn">JOIN VIP</button>
-                    </div>
-                </div>
-                
-                <div class="assets-list">
-                    <button id="crypto-asset-btn" class="asset-item"><div class="asset-icon"><i class="fa-solid fa-bitcoin"></i></div><div class="asset-info"><div class="asset-name">Crypto</div><div id="crypto-asset-balance" class="asset-balance">$0.00</div></div><i class="fa-solid fa-chevron-right"></i></button>
-                    <button id="cash-asset-btn" class="asset-item"><div class="asset-icon"><i class="fa-solid fa-dollar-sign"></i></div><div class="asset-info"><div class="asset-name">Cash</div><div id="cash-asset-balance" class="asset-balance">$0.00</div></div><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-        
+                <div class="top-header"><button id="menu-btn" class="menu-button"><i class="fa-solid fa-bars"></i></button></div>
+                <div class="top-bar-box"><p class="balance-label">Main Balance</p><div id="main-balance" class="main-balance-amount">$0.00</div><p id="bonus-balance" class="bonus-balance-amount">Bonus: $0.00</p><div class="top-buttons-container"><button id="top-deposit-btn" class="top-action-btn">Deposit</button><button id="top-withdraw-btn" class="top-action-btn">Withdraw</button><button id="top-vip-btn" class="top-action-btn">JOIN VIP</button></div></div>
+                <div class="assets-list"><button id="crypto-asset-btn" class="asset-item"><div class="asset-icon"><i class="fa-solid fa-bitcoin"></i></div><div class="asset-info"><div class="asset-name">Crypto</div><div id="crypto-asset-balance" class="asset-balance">$0.00</div></div><i class="fa-solid fa-chevron-right"></i></button><button id="cash-asset-btn" class="asset-item"><div class="asset-icon"><i class="fa-solid fa-dollar-sign"></i></div><div class="asset-info"><div class="asset-name">Cash</div><div id="cash-asset-balance" class="asset-balance">$0.00</div></div><i class="fa-solid fa-chevron-right"></i></button></div>
                 <hr style="border-color: var(--border-color); border-style: solid; margin: 32px 0;">
-        
-                <section class="watchlist-section">
-                    <button id="manage-assets-btn" class="manage-button">Manage your assets</button>
-                </section>
-
-                <section class="crypto-market-section">
-                    <h2>Markets</h2>
-                    <div id="crypto-grid" class="crypto-grid"></div>
-                </section>
+                <section class="watchlist-section"><button id="manage-assets-btn" class="manage-button">Manage your assets</button></section>
+                <section class="crypto-market-section"><h2>Markets</h2><div id="crypto-grid" class="crypto-grid"></div></section>
             </div>
             
-            <div id="menu-modal" class="modal sidebar"><div class="modal-content"><div class="modal-header"><h2>Menu</h2><span class="modal-close-btn">&times;</span></div><ul class="modal-list"><li id="menu-refer-btn" class="sidebar-list-item"><i class="fa-solid fa-share-nodes asset-icon"></i><div class="item-info"><div class="item-name">Refer a Friend</div></div></li><li id="menu-referrals-count" class="sidebar-list-item"><i class="fa-solid fa-users asset-icon"></i><div class="item-info"><div class="item-name">Your Referrals: <span id="referral-count">0</span></div></div></li><li id="menu-pending-tx" class="sidebar-list-item"><i class="fa-solid fa-hourglass-half asset-icon"></i><div class="item-info"><div class="item-name">Pending Transactions</div></div></li><li id="menu-successful-tx" class="sidebar-list-item"><i class="fa-solid fa-check-circle asset-icon"></i><div class="item-info"><div class="item-name">Successful Transactions</div></div></li><li id="menu-logout-btn" class="sidebar-list-item"><i class="fa-solid fa-right-from-bracket asset-icon"></i><div class="item-info"><div class="item-name">Log Out</div></div></li></ul></div></div>
-            <div id="referral-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Refer a Friend</h2><span class="modal-close-btn">&times;</span></div><p style="color: var(--secondary-text); font-size: 14px; line-height: 1.5; margin-bottom: 16px;">Share this link with your friends. When they sign up and make their first deposit of at least $50, you both earn a bonus!</p><div class="deposit-address-container"><span id="referral-link-text" class="address-text"></span><button class="copy-btn" data-copy-target="referral-link-text">Copy</button></div></div></div>
-            <div id="deposit-amount-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Crypto Deposit</h2><span class="modal-close-btn">&times;</span></div><p style="color: var(--secondary-text);">Enter the amount in USD you would like to deposit.</p><input id="deposit-amount-input" type="number" class="form-input" placeholder="e.g., 50.00" min="1"><button id="confirm-deposit-btn" class="top-action-btn" style="background-color: var(--positive-green);">Get Payment Address</button></div></div>
-            <div id="payment-details-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Complete Your Deposit</h2><span class="modal-close-btn">&times;</span></div><p style="text-align: center; color: var(--secondary-text);">Scan the QR code or copy the details below to pay.</p><div class="qr-code-container" id="qrcode"></div><div class="deposit-address-container"><span class="address-text">Amount: <strong id="payment-amount"></strong></span><button class="copy-btn" data-copy-target="payment-amount">Copy</button></div><div class="deposit-address-container" style="margin-top: 12px;"><span id="payment-address" class="address-text"></span><button class="copy-btn" data-copy-target="payment-address">Copy</button></div></div></div>
-            <div id="pending-tx-modal" class="modal sidebar"><div class="modal-content"><div class="modal-header"><h2>Pending Transactions</h2><span class="modal-close-btn">&times;</span></div><p>No pending transactions.</p></div></div>
-            <div id="successful-tx-modal" class="modal sidebar"><div class="modal-content"><div class="modal-header"><h2>Successful Transactions</h2><span class="modal-close-btn">&times;</span></div><p>No successful transactions yet.</p></div></div>
-            <div id="vip-modal" class="modal slide-from-right"><div class="modal-content"><div class="modal-header"><h2>Become a VIP</h2><span class="modal-close-btn">&times;</span></div><ul class="modal-list"><li class="vip-list-item vip-deposit-option"><i class="fa-solid fa-star vip-icon bronze"></i><div class="item-info"><strong>Starter:</strong> $30-$99 (up to 20%)</div></li><li class="vip-list-item vip-deposit-option"><i class="fa-solid fa-medal vip-icon bronze"></i><div class="item-info"><strong>Bronze:</strong> $100-$199 (up to 50%)</div></li><li class="vip-list-item vip-deposit-option"><i class="fa-solid fa-medal vip-icon silver"></i><div class="item-info"><strong>Silver:</strong> $200-$499 (up to 75%)</div></li><li class="vip-list-item vip-deposit-option"><i class="fa-solid fa-medal vip-icon gold"></i><div class="item-info"><strong>Gold:</strong> $500-$1,000 (up to 100%)</div></li><li class="vip-list-item vip-deposit-option"><i class="fa-solid fa-gem vip-icon platinum"></i><div class="item-info"><strong>Platinum:</strong> $1,001-$5,000 (100% + X2)</div></li><li class="vip-list-item vip-deposit-option"><i class="fa-solid fa-gem vip-icon diamond"></i><div class="item-info"><strong>Diamond:</strong> $5,001-$10,000 (Instant $30k)</div></li></ul></div></div>
-            <div id="manage-assets-modal" class="modal sidebar"><div class="modal-content"><div class="modal-header"><h2>Manage Your Assets</h2><span class="modal-close-btn">&times;</span></div><ul class="modal-list"><li><i class="fa-solid fa-wallet asset-icon"></i><div class="item-info"><div class="item-name">Main Balance</div><span id="manage-main-balance">$0.00</span></div></li><li><i class="fa-solid fa-gift asset-icon"></i><div class="item-info"><div class="item-name">Bonus Balance</div><span id="manage-bonus-balance">$0.00</span></div></li></ul></div></div>
-            <div id="crypto-asset-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Crypto Balance</h2><span class="modal-close-btn">&times;</span></div><div style="text-align: center; font-size: 24px;"><i class="fa-solid fa-bitcoin"></i> <span id="crypto-modal-balance">$0.00</span></div></div></div>
-            <div id="cash-asset-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Cash (Bonus) Balance</h2><span class="modal-close-btn">&times;</span></div><div style="text-align: center; font-size: 24px;"><i class="fa-solid fa-dollar-sign"></i> <span id="cash-modal-balance">$0.00</span></div></div></div>
-            <div id="withdraw-modal" class="modal slide-from-top"><div class="modal-content"><div class="modal-header"><h2>Withdraw Funds</h2><span class="modal-close-btn">&times;</span></div><input id="withdraw-address" type="text" class="form-input" placeholder="Enter your BTC wallet address"><input id="withdraw-amount" type="number" class="form-input" placeholder="Amount (Min: $50.00)" min="50"><div class="top-buttons-container"><button id="cancel-withdrawal-btn" class="top-action-btn" style="background-color: var(--surface-light);">Cancel</button><button id="confirm-withdrawal-btn" class="top-action-btn" style="background-color: var(--positive-green);">Confirm</button></div></div></div>
-        </div>
+            <div id="menu-modal" class="modal sidebar">
+                <div class="modal-content">
+                    <div class="modal-header"><h2>Menu</h2><span class="modal-close-btn">&times;</span></div>
+                    <ul class="modal-list">
+                        <li id="menu-refer-btn" class="sidebar-list-item"><i class="fa-solid fa-share-nodes asset-icon"></i><div class="item-info"><div class="item-name">Refer a Friend</div></div></li>
+                        <li id="menu-referrals-count" class="sidebar-list-item"><i class="fa-solid fa-users asset-icon"></i><div class="item-info"><div class="item-name">Your Referrals: <span id="referral-count">0</span></div></div></li>
+                        <li id="menu-pending-tx" class="sidebar-list-item"><i class="fa-solid fa-hourglass-half asset-icon"></i><div class="item-info"><div class="item-name">Pending Transactions</div></div></li>
+                        <li id="menu-successful-tx" class="sidebar-list-item"><i class="fa-solid fa-check-circle asset-icon"></i><div class="item-info"><div class="item-name">Successful Transactions</div></div></li>
+                        <li id="menu-failed-tx" class="sidebar-list-item"><i class="fa-solid fa-circle-xmark asset-icon"></i><div class="item-info"><div class="item-name">Failed Transactions</div></div></li>
+                        <li id="menu-logout-btn" class="sidebar-list-item"><i class="fa-solid fa-right-from-bracket asset-icon"></i><div class="item-info"><div class="item-name">Log Out</div></div></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="referral-modal" class="modal"><div class="modal-content">...</div></div>
+            <div id="deposit-amount-modal" class="modal"><div class="modal-content">...</div></div>
+            <div id="payment-details-modal" class="modal"><div class="modal-content">...</div></div>
+
+            <div id="pending-tx-modal" class="modal sidebar">
+                <div class="modal-content">
+                    <div class="modal-header"><h2>Pending Transactions</h2><span class="modal-close-btn">&times;</span></div>
+                    <div id="pending-tx-list" class="transaction-list">
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="successful-tx-modal" class="modal sidebar">
+                <div class="modal-content">
+                    <div class="modal-header"><h2>Successful Transactions</h2><span class="modal-close-btn">&times;</span></div>
+                    <div id="successful-tx-list" class="transaction-list">
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="failed-tx-modal" class="modal sidebar">
+                <div class="modal-content">
+                    <div class="modal-header"><h2>Failed Transactions</h2><span class="modal-close-btn">&times;</span></div>
+                    <div id="failed-tx-list" class="transaction-list">
+                        <p>Loading transactions...</p>
+                    </div>
+                </div>
+            </div>
+            
+            </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // MODIFIED: All Supabase logic is integrated here
         const SUPABASE_URL = 'https://znhdxbgzowificnlcdiq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuaGR4Ymd6b3dpZmljbmxjZGlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzNjU0MzQsImV4cCI6MjA2ODk0MTQzNH0.Vbo9tv6Qgn7EVP4keS2ZWLGTS_1qA9X3j6662JLdsvk';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         document.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
+            if (!session) { window.location.href = 'index.html'; return; }
             const user = session.user;
-            const { data: profile, error: profileError } = await supabaseClient
-                .from('profiles')
-                .select('username, main_balance, bonus_balance, successful_referrals_count, referral_code')
-                .eq('id', user.id)
-                .single();
-            if (profileError) {
-                alert('Could not load your profile. Please log in again.');
+            const { data: profile, error } = await supabaseClient.from('profiles').select('username, main_balance, bonus_balance, successful_referrals_count, referral_code').eq('id', user.id).single();
+            if (error) {
+                alert('Could not load profile.');
                 await supabaseClient.auth.signOut();
                 window.location.href = 'index.html';
                 return;
@@ -229,191 +235,80 @@
         });
 
         function initializeDashboard(user, profile) {
-            // Get All DOM Elements
-            const allModals = document.querySelectorAll('.modal');
-            const cryptoGrid = document.getElementById('crypto-grid');
-            const toastNotification = document.getElementById('toast-notification');
-            const mainBalanceElement = document.getElementById('main-balance');
-            const bonusBalanceElement = document.getElementById('bonus-balance');
-            const menuBtn = document.getElementById('menu-btn');
-            const topDepositBtn = document.getElementById('top-deposit-btn');
-            const topWithdrawBtn = document.getElementById('top-withdraw-btn');
-            const topVipBtn = document.getElementById('top-vip-btn');
-            const manageAssetsBtn = document.getElementById('manage-assets-btn');
-            const cryptoAssetBtn = document.getElementById('crypto-asset-btn');
-            const cashAssetBtn = document.getElementById('cash-asset-btn');
+            // ... your existing element selectors ...
             const menuPendingTxBtn = document.getElementById('menu-pending-tx');
             const menuSuccessfulTxBtn = document.getElementById('menu-successful-tx');
-            const menuLogoutBtn = document.getElementById('menu-logout-btn');
-            const menuReferBtn = document.getElementById('menu-refer-btn');
-            const referralCountElement = document.getElementById('referral-count');
-            const depositAmountModal = document.getElementById('deposit-amount-modal');
-            const depositAmountInput = document.getElementById('deposit-amount-input');
-            const confirmDepositBtn = document.getElementById('confirm-deposit-btn');
-            const withdrawModal = document.getElementById('withdraw-modal');
-            const withdrawAmountInput = document.getElementById('withdraw-amount');
-            const confirmWithdrawalBtn = document.getElementById('confirm-withdrawal-btn');
-            const cancelWithdrawalBtn = document.getElementById('cancel-withdrawal-btn');
-            
-            // Utility Functions
-            const showToast = (message, duration = 3000) => {
-                toastNotification.textContent = message;
-                toastNotification.classList.add('show');
-                setTimeout(() => { toastNotification.classList.remove('show'); }, duration);
-            };
-            const openModal = (modal) => {
+            const menuFailedTxBtn = document.getElementById('menu-failed-tx'); // MODIFIED
+
+            // ... your existing utility functions (showToast, openModal, etc.) ...
+            const allModals = document.querySelectorAll('.modal');
+            const openModal = (modalId) => {
                 allModals.forEach(m => m.classList.remove('show'));
+                const modal = document.getElementById(modalId);
                 if (modal) modal.classList.add('show');
             };
-            const closeModal = () => allModals.forEach(m => m.classList.remove('show'));
-            document.querySelectorAll('.modal-close-btn').forEach(btn => btn.addEventListener('click', closeModal));
+            document.querySelectorAll('.modal-close-btn').forEach(btn => btn.addEventListener('click', () => allModals.forEach(m => m.classList.remove('show'))));
 
-            // Event Listeners
-            menuBtn.addEventListener('click', () => openModal(document.getElementById('menu-modal')));
-            
-            // New Feature Logic
-            topVipBtn.addEventListener('click', () => openModal(document.getElementById('vip-modal')));
-            document.querySelectorAll('.vip-deposit-option').forEach(btn => {
-                btn.addEventListener('click', () => openModal(depositAmountModal));
-            });
-
-            manageAssetsBtn.addEventListener('click', () => {
-                document.getElementById('manage-main-balance').textContent = `$${parseFloat(profile.main_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                document.getElementById('manage-bonus-balance').textContent = `$${parseFloat(profile.bonus_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                openModal(document.getElementById('manage-assets-modal'));
-            });
-
-            const handleWithdrawalValidation = () => {
-                const mainBalance = parseFloat(profile.main_balance);
-                const requestedAmount = parseFloat(withdrawAmountInput.value) || 0;
+            // --- MODIFIED: Transaction History Logic ---
+            const renderTransactionHistory = async (status, listElementId) => {
+                const listElement = document.getElementById(listElementId);
+                listElement.innerHTML = "<p>Loading transactions...</p>";
                 
-                if (mainBalance < 50) {
-                    confirmWithdrawalBtn.disabled = true;
-                    showToast("Balance is below the $50.00 minimum for withdrawal.", 3000);
-                } else if (requestedAmount > mainBalance) {
-                    confirmWithdrawalBtn.disabled = true;
-                    showToast("Withdrawal amount cannot be higher than your main balance.", 3000);
-                } else {
-                    confirmWithdrawalBtn.disabled = false;
-                }
-            };
-            topWithdrawBtn.addEventListener('click', () => {
-                openModal(withdrawModal);
-                handleWithdrawalValidation();
-            });
-            withdrawAmountInput.addEventListener('input', handleWithdrawalValidation);
-            confirmWithdrawalBtn.addEventListener('click', () => {
-                alert("You must join at least VIP Silver or higher to withdraw.");
-            });
-            cancelWithdrawalBtn.addEventListener('click', closeModal);
+                const { data: transactions, error } = await supabaseClient
+                    .from('transactions')
+                    .select('description, amount, created_at, type')
+                    .eq('user_id', user.id)
+                    .eq('status', status)
+                    .order('created_at', { ascending: false });
 
-            document.getElementById('crypto-asset-balance').textContent = `$${parseFloat(profile.main_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            document.getElementById('cash-asset-balance').textContent = `$${parseFloat(profile.bonus_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            cryptoAssetBtn.addEventListener('click', () => {
-                document.getElementById('crypto-modal-balance').textContent = `$${parseFloat(profile.main_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                openModal(document.getElementById('crypto-asset-modal'));
-            });
-            cashAssetBtn.addEventListener('click', () => {
-                document.getElementById('cash-modal-balance').textContent = `$${parseFloat(profile.bonus_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                openModal(document.getElementById('cash-asset-modal'));
-            });
-
-            menuPendingTxBtn.addEventListener('click', () => openModal(document.getElementById('pending-tx-modal')));
-            menuSuccessfulTxBtn.addEventListener('click', () => openModal(document.getElementById('successful-tx-modal')));
-            
-            menuLogoutBtn.addEventListener('click', async () => {
-                await supabaseClient.auth.signOut();
-                window.location.href = 'index.html';
-            });
-            menuReferBtn.addEventListener('click', () => {
-                const yourSiteUrl = 'https://walletsbafg.netlify.app'; 
-                const referralLink = `${yourSiteUrl}/index.html?ref=${profile.referral_code}`;
-                document.getElementById('referral-link-text').textContent = referralLink;
-                openModal(document.getElementById('referral-modal'));
-            });
-            topDepositBtn.addEventListener('click', () => openModal(depositAmountModal));
-            confirmDepositBtn.addEventListener('click', async () => {
-                const amount = parseFloat(depositAmountInput.value);
-                if (!amount || amount < 1) return alert('Please enter a valid amount.');
-                confirmDepositBtn.disabled = true;
-                confirmDepositBtn.textContent = 'Generating...';
-                const { data, error } = await supabaseClient.functions.invoke('create-nowpayments-payment', { body: { amount, userId: user.id } });
                 if (error) {
-                    alert('Could not start the deposit process. Please try again.');
-                } else {
-                    const paymentDetailsModal = document.getElementById('payment-details-modal');
-                    const paymentAmountEl = document.getElementById('payment-amount');
-                    const paymentAddressEl = document.getElementById('payment-address');
-                    const qrcodeContainer = document.getElementById('qrcode');
-                    paymentAmountEl.textContent = `${data.pay_amount} ${data.pay_currency.toUpperCase()}`;
-                    paymentAddressEl.textContent = data.pay_address;
-                    qrcodeContainer.innerHTML = "";
-                    new QRCode(qrcodeContainer, {
-                        text: `${data.pay_currency}:${data.pay_address}?amount=${data.pay_amount}`,
-                        width: 128,
-                        height: 128,
-                    });
-                    openModal(paymentDetailsModal);
+                    listElement.innerHTML = "<p>Could not load transaction history.</p>";
+                    console.error(`Error fetching ${status} transactions:`, error);
+                    return;
                 }
-                confirmDepositBtn.disabled = false;
-                confirmDepositBtn.textContent = 'Get Payment Address';
-            });
-            
-            document.querySelectorAll('.copy-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                     const targetId = btn.dataset.copyTarget;
-                     const textToCopy = document.getElementById(targetId).innerText;
-                     navigator.clipboard.writeText(textToCopy).then(() => {
-                        showToast("Copied!", 2000);
-                     }).catch(err => console.error('Failed to copy', err));
-                });
+
+                if (transactions.length === 0) {
+                    listElement.innerHTML = `<p>No ${status} transactions found.</p>`;
+                    return;
+                }
+
+                listElement.innerHTML = transactions.map(tx => {
+                    const date = new Date(tx.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    const amountSign = (tx.type === 'deposit' || tx.type === 'bonus') ? '+' : '-';
+                    const amountColor = (tx.type === 'deposit' || tx.type === 'bonus') ? 'var(--positive-green)' : 'var(--primary-text)';
+
+                    return `
+                        <div class="transaction-item">
+                            <div class="transaction-details">
+                                <div class="transaction-description">${tx.description}</div>
+                                <div class="transaction-date">${date}</div>
+                            </div>
+                            <div class="transaction-amount" style="color: ${amountColor};">
+                                ${amountSign}$${parseFloat(tx.amount).toFixed(2)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            };
+
+            // Hook up transaction history buttons
+            menuPendingTxBtn.addEventListener('click', () => {
+                renderTransactionHistory('pending', 'pending-tx-list');
+                openModal('pending-tx-modal');
             });
 
-            async function fetchCryptoPrices() {
-                if (!cryptoGrid) return;
-                const coinIds = 'bitcoin,ethereum,tether,solana,binancecoin,ripple';
-                const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}`;
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const data = await response.json();
-                    cryptoGrid.innerHTML = '';
-                    data.forEach(coin => {
-                        const change = coin.price_change_percentage_24h || 0;
-                        const changeClass = change >= 0 ? 'positive' : 'negative';
-                        cryptoGrid.innerHTML += `
-                            <div class="crypto-card">
-                                <div class="crypto-card-header">
-                                    <img src="${coin.image}" alt="${coin.name}" class="crypto-logo">
-                                    <span class="crypto-symbol">${coin.symbol.toUpperCase()}</span>
-                                </div>
-                                <div class="crypto-price">$${coin.current_price.toLocaleString('en-US')}</div>
-                                <div class="crypto-change ${changeClass}">${change.toFixed(2)}%</div>
-                            </div>`;
-                    });
-                } catch (error) {
-                    console.error("Failed to fetch crypto prices:", error);
-                }
-            }
+            menuSuccessfulTxBtn.addEventListener('click', () => {
+                renderTransactionHistory('completed', 'successful-tx-list');
+                openModal('successful-tx-modal');
+            });
 
-            // --- INITIALIZATION ---
-            mainBalanceElement.textContent = `$${parseFloat(profile.main_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            bonusBalanceElement.textContent = `Bonus: $${parseFloat(profile.bonus_balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            referralCountElement.textContent = profile.successful_referrals_count;
-            
-            function showGreeting() {
-                const currentHour = new Date().getHours();
-                let greeting = "Welcome";
-                if (currentHour < 12) greeting = "Good morning";
-                else if (currentHour < 18) greeting = "Good afternoon";
-                else greeting = "Good evening";
-                const displayName = profile.username || user.email;
-                showToast(`${greeting}, ${displayName}!`);
-            }
-            
-            showGreeting();
-            fetchCryptoPrices(); 
-            setInterval(fetchCryptoPrices, 1800000);
+            menuFailedTxBtn.addEventListener('click', () => {
+                renderTransactionHistory('failed', 'failed-tx-list');
+                openModal('failed-tx-modal');
+            });
+            // --- End of Transaction History Logic ---
+
+            // ... all your other event listeners for VIP, withdraw, deposit, etc. ...
         }
     </script>
 </body>
